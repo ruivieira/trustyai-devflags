@@ -1,0 +1,53 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: RAGEval
+metadata:
+  name: ragas-evaluation-example
+  namespace: test
+spec:
+  # Model configuration
+  modelEndpoint: "http://vllm-emulator.test.svc.cluster.local:8000"
+  modelName: "microsoft/DialoGPT-medium"
+  
+  # Evaluation configuration
+  metrics:
+    - "faithfulness"
+    - "response_relevancy"
+    - "context_precision"
+    - "semantic_similarity"
+  
+  # Dataset configuration
+  dataset:
+    samples:
+      - question: "What is microservices architecture?"
+        context:
+          - "Microservices architecture is a design approach where applications are built as a collection of small, independent services that communicate over APIs."
+        groundTruth: "Microservices architecture breaks down applications into smaller, loosely coupled services that can be developed, deployed, and scaled independently."
+        metadata:
+          topic: "architecture"
+          complexity: "medium"
+      
+      - question: "How do you implement CI/CD pipelines?"
+        context:
+          - "CI/CD pipelines automate code integration, testing, and deployment. Use tools like Jenkins, GitLab CI, or GitHub Actions with stages for build, test, and deploy."
+        groundTruth: "CI/CD pipelines involve automated stages: continuous integration (build/test) and continuous deployment (release/deploy) using tools like Jenkins or GitLab CI."
+        metadata:
+          topic: "devops"
+          complexity: "high"
+  
+  # Evaluation parameters
+  temperature: 0.1
+  maxTokens: 512
+  evaluationTimeout: 1800
+  
+  # Job configuration
+  image: "quay.io/trustyai/ragas-evaluator:latest"
+  imagePullPolicy: "IfNotPresent"
+  
+  # Resource requirements
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi" 
